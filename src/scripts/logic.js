@@ -2,14 +2,14 @@ const canvas = document.getElementById("hangmanGame");
 const ctx = canvas.getContext("2d");
 
 // Draw each letter in the secret word
-export function drawRevealedLetters(letters, clickedButton) {
+export function drawRevealedLetters(clickedButton, letters) {
     let pathPosition = 10;
     for (let i = 0; i < letters.length; i++) {
         
         if(letters[i].revealed) {
             letters[i].letter === ' ' ? 
             pathPosition += 12 : 
-            ctx.fillText(letters.find((element) => element.letter.toLowerCase() === clickedButton.value).letter, pathPosition, 50);
+            ctx.fillText(letters[i].letter.toLowerCase(), pathPosition, 50);
         }
         ctx.beginPath();
         ctx.moveTo(pathPosition, 55);
@@ -20,65 +20,39 @@ export function drawRevealedLetters(letters, clickedButton) {
 }
 
 // Check if clicked button matches any letter in secret word
-export function checkMathcingLetter(letters, clickedButton) {
+function isLetterMatching(clickedButton, letters) {
 
-    if(letters.find(element => element.letter.toLowerCase() == clickedButton.value)) {
-        return true;
-    }
-    else {
-        return false;
-    }
-
-    const matchedLetter = letters.find(element => element.letter.toLowerCase() == clickedButton.value);
-    console.log(matchedLetter)
-    if (matchedLetter !== undefined) {
-        matchedLetter.revealed = true;
-
-        drawRevealedLetters(letters, clickedButton);
-
-        clickedButton.style.backgroundColor = "green"
-        clickedButton.disabled = true;
-    }
-    else {
-            clickedButton.style.backgroundColor = "red"
-            clickedButton.disabled = true;
-    }
-    
-    /*letters.forEach((obj, index) => {
-        console.log(clickedButton)
-        if (obj.letter.toLowerCase() === clickedButton.value) {
-            obj.revealed = true;
-            
-            drawLetters(letters, clickedButton)   
-    
-            clickedButton.style.backgroundColor = "red"
-            clickedButton.disabled = true;
+    let foundLetter = false;
+    letters.forEach((e, index) => {
+        if(e.letter.toLowerCase() === clickedButton.target.value) {
+            letters[index].revealed = true;
+            foundLetter = true;
         }
-        else if(obj.letter.toLowerCase() !== clickedButton.value) {
-            clickedButton.style.backgroundColor = "green"
-            clickedButton.disabled = true;
-        }
-    }); */
+
+        return foundLetter;
+    });
+    
+    return foundLetter;
 }
 
-function updateClickedButton(isCorrect, button) {
-    button.disabled = true;
+
+function updateClickedButton(button, isCorrect) {
+    const currentButton = button.target;
+    currentButton.disabled = true;
 
     if(isCorrect) {
-        button.style.backgroundColor = "green";
+        currentButton.style.backgroundColor = "green";
     }
     else {
-        button.style.backgroundColor = "red";
+        currentButton.style.backgroundColor = "red";
     }
 }
 
-
-
-export function handleGameClick(clickedButton) {
-    if(checkMathcingLetter(letterObjects, button)) {
-        updateClickedButton(true, clickedButton);
+export function handleGameClick(clickedButton, letters) {
+    if(isLetterMatching(clickedButton, letters)) {
+        updateClickedButton(clickedButton, true);
     }
-
-    updateClickedButton(false, clickedButton);
-    drawRevealedLetters(letters, clickedButton);
+    else {
+        updateClickedButton(clickedButton, false)
+    }
 }

@@ -1,0 +1,28 @@
+main {
+    margin: auto;
+    max-width: 900px;
+    width: 100%; 
+}
+
+#hangmanGame {
+    background-color: aqua;
+}
+
+#letterContainer {
+    ul {
+        padding-left: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+
+.letterButton {
+    list-style-type: none;
+    
+    button {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+    }
+}

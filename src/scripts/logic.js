@@ -1,20 +1,23 @@
-const canvas = document.getElementById("hangmanGame");
-const ctx = canvas.getContext("2d");
-
 // Draw each letter in the secret word
-export function drawRevealedLetters(clickedButton, letters) {
-    let pathPosition = 10;
+export function drawRevealedLetters(canvas, letters, fontSize, pathPosition = 10, pathOffset = 12) {
+
+    const ctx = canvas.getContext("2d");
+    ctx.font = fontSize;
+
     for (let i = 0; i < letters.length; i++) {
-        
-        if(letters[i].revealed) {
-            letters[i].letter === ' ' ? 
-            pathPosition += 12 : 
-            ctx.fillText(letters[i].letter.toLowerCase(), pathPosition, 50);
+        if(letters[i].letter === ' ') {
+            pathPosition += pathOffset
+            continue;
         }
+
+        if(letters[i].revealed) {
+            ctx.fillText(letters[i].letter, pathPosition, 200);
+        }
+
         ctx.beginPath();
-        ctx.moveTo(pathPosition, 55);
-        pathPosition += 12;
-        ctx.lineTo(pathPosition-2, 55);
+        ctx.moveTo(pathPosition, 210);
+        pathPosition += pathOffset;
+        ctx.lineTo(pathPosition-2, 210);
         ctx.stroke();
     }
 }
@@ -51,8 +54,10 @@ function updateClickedButton(button, isCorrect) {
 export function handleGameClick(clickedButton, letters) {
     if(isLetterMatching(clickedButton, letters)) {
         updateClickedButton(clickedButton, true);
+        return true;
     }
     else {
         updateClickedButton(clickedButton, false)
+        return false;
     }
 }

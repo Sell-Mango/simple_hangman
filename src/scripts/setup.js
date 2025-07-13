@@ -1,10 +1,10 @@
 // SETUP CANVAS
-const canvas = document.getElementById("hangmanGame");
-const ctx = canvas.getContext("2d");
 
 export function resizeCanvas(canvas, parentElement) {
-    canvas.width = 500;
-    canvas.height = 400;
+    const ctx = canvas.getContext("2d");
+    canvas.width = parentElement.offsetWidth;
+    canvas.height = 500;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 // Generate html for each letter button

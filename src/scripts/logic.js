@@ -4,8 +4,11 @@ export function drawRevealedLetters(canvas, letters) {
     const ctx = canvas.getContext("2d");
     ctx.font = "600 35px Grandstander, cursive";
     
-    let positionX = 400;
-    let positionY = 200;
+    const initPosX = 400;
+    const initPosY = 150;
+
+    let positionX = initPosX;
+    let positionY = initPosY;
     let pathLength = 30;
     let spacing = 8;
 
@@ -21,7 +24,7 @@ export function drawRevealedLetters(canvas, letters) {
 
         // Adds a newline if word is colliding with edge of canvas
         if (wordSize >= (canvas.width - pathLength)) {
-            positionX = 400;
+            positionX = initPosX;
             positionY += 50;
             wordSize = 0;
         }    

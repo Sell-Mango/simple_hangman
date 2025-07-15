@@ -12,9 +12,7 @@ const ctx = canvas.getContext("2d");
 navLettersContainer.innerHTML = renderLetterButtons();
 
 // PREPARE WORD
-const incomingWord = "Hvit monster";
-const fontSize = "20px serif";
-let wordsPlacing = 400;
+const incomingWord = "Hvit monster i brun ";
 let difficultyTurn = 0;
 
 let letterObjects = createLetterObjects(incomingWord);
@@ -22,7 +20,7 @@ let letterObjects = createLetterObjects(incomingWord);
 
 function initGame() {
     resizeCanvas(canvas, mainTag);
-    drawRevealedLetters(canvas, letterObjects, fontSize, wordsPlacing, 20);
+    drawRevealedLetters(canvas, letterObjects);
     drawHangman(canvas, difficultyTurn);
 }
 
@@ -32,7 +30,7 @@ window.onload = initGame();
 // EVENTS
 window.addEventListener("resize", () => {
     resizeCanvas(canvas, mainTag);
-    // drawRevealedLetters(letterObjects);
+    drawRevealedLetters(canvas, letterObjects);
     drawHangman(canvas, difficultyTurn);
 })
 
@@ -43,7 +41,7 @@ navLettersContainer.addEventListener("click", (key) => {
             difficultyTurn++;
         }
         drawHangman(canvas, difficultyTurn);
-        drawRevealedLetters(canvas, letterObjects, fontSize, wordsPlacing, 20);
+        drawRevealedLetters(canvas, letterObjects);
     }
 });
 

@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?&family=Honk&display=swap&family=Grandstander:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    background-color: rgb(234, 234, 234);
+}
+
 main {
     margin: auto;
     max-width: 900px;
@@ -5,7 +11,14 @@ main {
 }
 
 #hangmanGame {
-    background-color: aqua;
+    background-color: rgb(255, 255, 255);
+}
+
+h1 {
+  font-family: "Honk", system-ui;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-size: 45px;
 }
 
 #letterContainer {

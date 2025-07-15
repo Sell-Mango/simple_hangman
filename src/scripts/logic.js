@@ -1,24 +1,56 @@
 // Draw each letter in the secret word
-export function drawRevealedLetters(canvas, letters, fontSize, pathPosition = 10, pathOffset = 12) {
+export function drawRevealedLetters(canvas, letters) {
 
     const ctx = canvas.getContext("2d");
-    ctx.font = fontSize;
+    ctx.font = "600 35px Grandstander, cursive";
+    
+    let positionX = 400;
+    let positionY = 200;
+    let pathLength = 30;
+    let spacing = 8;
+
+    let tempWord = [];
+    let wordSize = 0;
 
     for (let i = 0; i < letters.length; i++) {
-        if(letters[i].letter === ' ') {
-            pathPosition += pathOffset
-            continue;
+
+        if (letters[i].letter !== ' ' || i >= (letters.length -1)) {
+            tempWord.push(letters[i]);
+            wordSize = positionX + spacing + pathLength + (letters[i].reavealed === true ? ctx.measureText(letters[i].letter).width : pathLength);
         }
 
-        if(letters[i].revealed) {
-            ctx.fillText(letters[i].letter, pathPosition, 200);
-        }
+        // Render word on canvas
+        if(letters[i].letter === ' ' || i >= (letters.length -1)) {
 
-        ctx.beginPath();
-        ctx.moveTo(pathPosition, 210);
-        pathPosition += pathOffset;
-        ctx.lineTo(pathPosition-2, 210);
-        ctx.stroke();
+            // Adds a newline if word is colliding with edge of canvas
+            if (wordSize >= canvas.width - pathLength) {
+                positionX = 400;
+                positionY += 50;
+                wordSize = 0;
+            }     
+            
+            for(let j = 0; j < tempWord.length; j++) {
+                let charLength = pathLength;
+
+                if(tempWord[j].revealed) {
+                    charLength = ctx.measureText(tempWord[j].letter).width;
+                    ctx.fillText(tempWord[j].letter, positionX, positionY);
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(positionX, positionY + 5);
+                positionX += charLength;
+
+                ctx.lineTo(positionX, positionY + 5);
+                ctx.stroke();
+                positionX += spacing;
+                
+            }
+            // Adds a blank line after word is rendered
+            positionX += pathLength;
+            // Clearing temporary word array
+            tempWord = [];
+        }
     }
 }
 

@@ -12,7 +12,7 @@ const ctx = canvas.getContext("2d");
 navLettersContainer.innerHTML = renderLetterButtons();
 
 // PREPARE WORD
-const incomingWord = "Hvit monstererrr i asdas dfdafasdSDAS";
+const incomingWord = "hvit mosss is";
 incomingWord.trimEnd();
 let difficultyTurn = 0;
 

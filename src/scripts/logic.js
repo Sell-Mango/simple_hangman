@@ -2,14 +2,14 @@
 export function drawRevealedLetters(canvas, letters) {
 
     const ctx = canvas.getContext("2d");
-    ctx.font = "600 35px Grandstander, cursive";
+    ctx.font = "600 30px Grandstander, cursive";
     
-    const initPosX = 400;
+    const initPosX = canvas.width / 2 - (canvas.width * 0.05);
     const initPosY = 150;
 
     let positionX = initPosX;
     let positionY = initPosY;
-    let pathLength = 30;
+    let pathLength = 25;
     let spacing = 8;
 
     let tempWord = [];
@@ -18,15 +18,15 @@ export function drawRevealedLetters(canvas, letters) {
     for (let i = 0; i < letters.length; i++) {
 
         if (letters[i].letter !== ' ' || i >= letters.length) {
-            wordSize += spacing + pathLength + (letters[i].reavealed === true ? ctx.measureText(letters[i].letter).width : pathLength);
+            wordSize += spacing + (letters[i].reavealed === true ? ctx.measureText(letters[i].letter).width : pathLength);
             tempWord.push(letters[i]);
         }
 
         // Adds a newline if word is colliding with edge of canvas
-        if (wordSize >= (canvas.width - pathLength)) {
+        if (wordSize >= (canvas.width - canvas.width / 9)) {
             positionX = initPosX;
             positionY += 50;
-            wordSize = 0;
+            wordSize = positionX;
         }    
 
         // Render word on canvas

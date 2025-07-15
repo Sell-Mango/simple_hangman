@@ -10,25 +10,24 @@ export function drawRevealedLetters(canvas, letters) {
     let spacing = 8;
 
     let tempWord = [];
-    let wordSize = 0;
+    let wordSize = positionX;
 
     for (let i = 0; i < letters.length; i++) {
 
-        if (letters[i].letter !== ' ' || i >= (letters.length -1)) {
+        if (letters[i].letter !== ' ' || i >= letters.length) {
+            wordSize += spacing + pathLength + (letters[i].reavealed === true ? ctx.measureText(letters[i].letter).width : pathLength);
             tempWord.push(letters[i]);
-            wordSize = positionX + spacing + pathLength + (letters[i].reavealed === true ? ctx.measureText(letters[i].letter).width : pathLength);
         }
+
+        // Adds a newline if word is colliding with edge of canvas
+        if (wordSize >= (canvas.width - pathLength)) {
+            positionX = 400;
+            positionY += 50;
+            wordSize = 0;
+        }    
 
         // Render word on canvas
         if(letters[i].letter === ' ' || i >= (letters.length -1)) {
-
-            // Adds a newline if word is colliding with edge of canvas
-            if (wordSize >= canvas.width - pathLength) {
-                positionX = 400;
-                positionY += 50;
-                wordSize = 0;
-            }     
-            
             for(let j = 0; j < tempWord.length; j++) {
                 let charLength = pathLength;
 

@@ -12,7 +12,8 @@ const ctx = canvas.getContext("2d");
 navLettersContainer.innerHTML = renderLetterButtons();
 
 // PREPARE WORD
-const incomingWord = "Hvit monster i brun ";
+const incomingWord = "Hvit monstererrr i asdas dfdafasdSDAS";
+incomingWord.trimEnd();
 let difficultyTurn = 0;
 
 let letterObjects = createLetterObjects(incomingWord);

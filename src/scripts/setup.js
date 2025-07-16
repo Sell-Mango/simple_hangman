@@ -1,11 +1,6 @@
 // SETUP CANVAS
 
-export function resizeCanvas(canvas, parentElement) {
-    const ctx = canvas.getContext("2d");
-    canvas.width = parentElement.offsetWidth;
-    canvas.height = 500;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
+
 
 // Generate html for each letter button
 export function renderLetterButtons() {

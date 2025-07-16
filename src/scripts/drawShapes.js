@@ -1,5 +1,5 @@
 
-export default function drawHangman(canvas, turn = 1) {
+export function drawHangman(canvas, turn = 1) {
 
     function startDraw() {
         ctx.moveTo(50, 350);
@@ -75,4 +75,16 @@ export default function drawHangman(canvas, turn = 1) {
         ctx.beginPath();
         drawings[i]();
     }
+}
+
+
+export function drawOptionButton(canvas, rect, fontStyle) {
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = rect.fillColor;
+    ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+    ctx.fillStyle = "black";
+    ctx.font = fontStyle;
+    ctx.textAlign = "center";
+    ctx.textBaseLine = "middle";
+    ctx.fillText(rect.text, rect.x + rect.width / 2, rect.y + rect.height / 2);
 }

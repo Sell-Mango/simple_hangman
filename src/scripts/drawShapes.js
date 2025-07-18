@@ -1,4 +1,3 @@
-
 export function drawHangman(canvas, turn = 1) {
 
     function startDraw() {
@@ -65,8 +64,6 @@ export function drawHangman(canvas, turn = 1) {
         ctx.lineTo(300, 210);
         ctx.stroke();
     }
-
-
     
     const ctx = canvas.getContext("2d");
     const drawings = [startDraw, turnOne, turnTwo, turnThree, drawHead, drawBody, drawLeftLeg, drawRightLeg, drawLeftArm, drawRightArm];
@@ -77,7 +74,6 @@ export function drawHangman(canvas, turn = 1) {
     }
 }
 
-
 export function drawOptionButton(canvas, rect, fontStyle) {
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = rect.fillColor;
@@ -85,6 +81,6 @@ export function drawOptionButton(canvas, rect, fontStyle) {
     ctx.fillStyle = "black";
     ctx.font = fontStyle;
     ctx.textAlign = "center";
-    ctx.textBaseLine = "middle";
+    ctx.textBaseline = "middle";
     ctx.fillText(rect.text, rect.x + rect.width / 2, rect.y + rect.height / 2);
 }

@@ -1,68 +1,60 @@
-import GameManager from './gameManager.js';
-import { renderLetterButtons, createLetterObjects } from './setup.js';
-import { handleGameClick, drawRevealedLetters, isCanvasButtonClicked } from './logic.js';
-import { drawHangman, drawOptionButton } from './drawShapes.js';
+import { initGame, chooseDifficulty, setSecretWord, renderLetterButtons, createLetterObjects, fetchSecretWord } from './setup.js';
+import { handleGameClick, drawRevealedLetters, resizeCanvas } from './logic.js';
+import { drawHangman } from './drawShapes.js';
+
+let gameInfo = {
+    difficulty: null,
+    secretWord: null
+}
 
 // GET HTML ELEMENTS
 const navLettersContainer = document.querySelector("#letterContainer ul");
-const canvas = document.getElementById("hangmanGame");''
-
-// SETUP UI
-navLettersContainer.innerHTML = renderLetterButtons();
-
-// CONSTRUCTORS
-const gameManager = new GameManager(canvas);
+const canvas = document.getElementById("hangmanGame");
 
 // PREPARE WORD
 const incomingWord = "hvit mosss is";
 incomingWord.trimEnd();
-gameManager.setDifficulty(canvas);
-let difficultyTurn = gameManager.difficultyLevel;
 
 let letterObjects = createLetterObjects(incomingWord);
-
-const easyButton = {
-    x: 100,
-    y: 100,
-    width: 150,
-    height: 80,
-    text: "Test knapp",
-    fillColor: "blue"
-}
-
-
+let ordListe;
 
 // START GAME
-function initGame() {
-    gameManager.resizeCanvas(canvas);
+function startGame(difficulty) {
+    gameInfo.difficulty = difficulty;
+
+    fetchSecretWord().then(function(e) {
+        ordListe = e;
+        testOrd();
+    });
+
+    //ordListe = setSecretWord(difficulty);
+    resizeCanvas(canvas);
     drawRevealedLetters(canvas, letterObjects);
-    drawHangman(canvas, difficultyTurn);
+    drawHangman(canvas, gameInfo.difficulty);
+
+    // RENDER LETTER BUTTONS
+    navLettersContainer.innerHTML = renderLetterButtons();
+}
+
+function testOrd() {
+    console.log(ordListe);
 }
 
 
-window.onload = initGame();
+
+window.onload = initGame(canvas, chooseDifficulty)
 
 // EVENTS
-window.addEventListener("resize", () => {
-    gameManager.resizeCanvas(canvas);
-    drawRevealedLetters(canvas, letterObjects);
-    drawHangman(canvas, difficultyTurn);
-})
-
 navLettersContainer.addEventListener("click", (key) => {
     if(key.target.matches(".letterButton button")) {       
-        gameManager.resizeCanvas(canvas);
+        resizeCanvas(canvas);
+        //console.log(gameInfo.difficulty)
         if(!handleGameClick(key, letterObjects)) {
-            difficultyTurn++;
+            gameInfo.difficulty++;
         }
-        drawHangman(canvas, difficultyTurn);
+        drawHangman(canvas, gameInfo.difficulty);
         drawRevealedLetters(canvas, letterObjects);
-    }
-});
-
-canvas.addEventListener("click", event => {
-    if(isCanvasButtonClicked(canvas, easyButton, event)) {
-        console.log("YES");
+        console.log(ordListe);
     }
 });
 

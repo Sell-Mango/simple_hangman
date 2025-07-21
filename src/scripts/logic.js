@@ -1,4 +1,4 @@
-export function resizeCanvas(canvas) {
+export function redrawCanvas(canvas) {
     const parentElement = canvas.parentElement;
     const ctx = canvas.getContext("2d");
     canvas.width = parentElement.offsetWidth;
@@ -115,4 +115,18 @@ export function isCanvasButtonClicked(canvas, rectElement, event) {
         }
 
         return (position.x > rectElement.x && position.x < rectElement.x + rectElement.width) && (position.y > rectElement.y && position.y < rectElement.y + rectElement.height);
+}
+
+export function checkGameStatus(gameInfo, maxTurns) {
+    let foundLetter = gameInfo.letterObjects.find(e => e.revealed === false);
+    if(foundLetter === undefined && gameInfo.turn <= maxTurns) {
+        gameComplete(true);
+    }
+    else if(foundLetter !== undefined && gameInfo.turn >= maxTurns) {
+        gameComplete(false);
+    }
+} 
+
+function gameComplete(hasWon) {
+    console.log(hasWon === true ? "Du vant" : "du tapte");
 }

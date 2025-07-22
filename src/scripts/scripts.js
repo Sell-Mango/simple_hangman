@@ -33,7 +33,7 @@ async function initGame() {
         else gameInfo.turn === 1;
 
         gameInfo.difficulty = difficulty;
-        gameInfo.secretWord = secretWord.word;
+        gameInfo.secretWord = secretWord.word.slice(0, 1).toUpperCase() + secretWord.word.slice(1);
         gameInfo.letterObjects = createLetterObjects(gameInfo.secretWord);
         sessionStorage.setItem("gameInfo", JSON.stringify(gameInfo));
         startGame();
@@ -49,7 +49,6 @@ function startGame() {
     // RENDER LETTER BUTTONS
     navLettersContainer.appendChild(renderLetterButtons(gameInfo.attempts));
     startOverButton(canvas, {x: canvas.width - 180, y: canvas.height - 80, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
-    console.log(gameInfo.secretWord);
 }
 
 window.onload = initGame;

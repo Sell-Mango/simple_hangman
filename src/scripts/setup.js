@@ -5,7 +5,7 @@ export async function splashScreen(canvas) {
     redrawCanvas(canvas);
     const ctx = canvas.getContext("2d");
     const img = new Image();
-    img.src = "../logo.png";
+    img.src = "logo.png";
 
     let splashScreenScale = 1;
 
@@ -54,7 +54,7 @@ export async function startScreen(canvas) {
     return new Promise((resolve, reject) => {
         canvas.addEventListener("click", (e) => {
             if(isCanvasButtonClicked(canvas, startButton, e)) {
-                resolve(fetch('../src/data/words.json')
+                resolve(fetch('/hangman/src/data/words.json')
                     .then((response) => response.json())
                 );
             }    

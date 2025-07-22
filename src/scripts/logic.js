@@ -138,8 +138,5 @@ export function gameComplete(canvas, hasWon, secretWord) {
     ctx.cursor = "pointer";
     ctx.fillText(secretWord, canvas.width / 2, 320);
 
-
-    console.log(hasWon === true ? "Du vant" : "du tapte");
-
     startOverButton(canvas, {x: canvas.width / 2 - (150 / 2), y: canvas.height - 100, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
 }

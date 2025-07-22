@@ -90,7 +90,7 @@ export async function chooseDifficulty(canvas) {
 
     return new Promise((resolve, reject) => {
         canvas.addEventListener("click", (event) => {
-        diffButtons.forEach((button) => {
+        diffButtons.forEach(button => {
             if(isCanvasButtonClicked(canvas, button, event)) {
                 resolve(button.diffLevel);
             }
@@ -159,4 +159,18 @@ export function createLetterObjects(word) {
         }
     });
     return wordSplit;
+}
+
+export function startOverButton(canvas, button) {
+
+    // const buttonInfo = {x: canvas.width / 2 - (150 / 2), y: canvas.height - 100, width: 150, height: 50, text: text, fillColor: "yellow"};
+
+    drawOptionButton(canvas, button, "20px Arial");
+
+    canvas.addEventListener("click", e => {
+        if(isCanvasButtonClicked(canvas, button, e)) {
+            sessionStorage.removeItem("gameInfo");
+            window.location.assign(window.location.href);
+        }
+    });
 }

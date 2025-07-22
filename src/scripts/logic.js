@@ -1,3 +1,5 @@
+import { startOverButton } from './setup.js';
+
 export function redrawCanvas(canvas) {
     const parentElement = canvas.parentElement;
     const ctx = canvas.getContext("2d");
@@ -117,16 +119,27 @@ export function isCanvasButtonClicked(canvas, rectElement, event) {
         return (position.x > rectElement.x && position.x < rectElement.x + rectElement.width) && (position.y > rectElement.y && position.y < rectElement.y + rectElement.height);
 }
 
-export function checkGameStatus(gameInfo, maxTurns) {
-    let foundLetter = gameInfo.letterObjects.find(e => e.revealed === false);
-    if(foundLetter === undefined && gameInfo.turn <= maxTurns) {
-        gameComplete(true);
-    }
-    else if(foundLetter !== undefined && gameInfo.turn >= maxTurns) {
-        gameComplete(false);
-    }
-} 
+export function gameComplete(canvas, hasWon, secretWord) {
+    const ctx = canvas.getContext("2d");
+    ctx.globalAlpha = 0.7;
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.globalAlpha = 1;
 
-function gameComplete(hasWon) {
+    const heading = hasWon === true ? "Gratulerer, du vant!" : "GAME OVER";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+
+    ctx.font = "600 40px Arial";
+    ctx.fillText(heading, canvas.width / 2, 200);
+    ctx.font = "400 25px Arial";
+    ctx.fillText("Hemmelig ord var: ", canvas.width / 2, 280);
+    ctx.font = "600 30px Arial";
+    ctx.cursor = "pointer";
+    ctx.fillText(secretWord, canvas.width / 2, 320);
+
+
     console.log(hasWon === true ? "Du vant" : "du tapte");
+
+    startOverButton(canvas, {x: canvas.width / 2 - (150 / 2), y: canvas.height - 100, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
 }

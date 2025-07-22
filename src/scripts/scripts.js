@@ -1,5 +1,5 @@
-import { splashScreen, startScreen, chooseDifficulty, setSecretWord, renderLetterButtons, createLetterObjects } from './setup.js';
-import { handleGameClick, drawRevealedLetters, redrawCanvas, checkGameStatus } from './logic.js';
+import { splashScreen, startScreen, chooseDifficulty, setSecretWord, renderLetterButtons, createLetterObjects, startOverButton } from './setup.js';
+import { handleGameClick, drawRevealedLetters, redrawCanvas, gameComplete } from './logic.js';
 import { drawHangman } from './drawShapes.js';
 
 const maxTurns = 9;
@@ -48,6 +48,8 @@ function startGame() {
 
     // RENDER LETTER BUTTONS
     navLettersContainer.appendChild(renderLetterButtons(gameInfo.attempts));
+    startOverButton(canvas, {x: canvas.width - 180, y: canvas.height - 80, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
+    console.log(gameInfo.secretWord);
 }
 
 window.onload = initGame;
@@ -67,6 +69,17 @@ navLettersContainer.addEventListener("click", (key) => {
         sessionStorage.setItem("gameInfo", JSON.stringify(gameInfo)); 
         drawHangman(canvas, gameInfo.turn);
         drawRevealedLetters(canvas, gameInfo.letterObjects);
-        checkGameStatus(gameInfo, maxTurns);
+
+        let foundLetter = gameInfo.letterObjects.find(e => e.revealed === false);
+
+        if(foundLetter === undefined && gameInfo.turn <= maxTurns) {
+            gameComplete(canvas, true, gameInfo.secretWord);
+        }
+        else if(foundLetter !== undefined && gameInfo.turn >= maxTurns) {
+            gameComplete(canvas, false, gameInfo.secretWord);
+        }
+        else {
+            startOverButton(canvas, {x: canvas.width - 180, y: canvas.height - 80, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
+        }
     }
 });

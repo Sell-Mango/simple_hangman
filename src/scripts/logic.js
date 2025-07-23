@@ -119,7 +119,21 @@ export function isCanvasButtonClicked(canvas, rectElement, event) {
         return (position.x > rectElement.x && position.x < rectElement.x + rectElement.width) && (position.y > rectElement.y && position.y < rectElement.y + rectElement.height);
 }
 
-export function gameComplete(canvas, hasWon, secretWord) {
+export function checkGameStatus(gameInfo, maxTurns) {
+    let foundLetter = gameInfo.letterObjects.find(e => e.revealed === false);
+
+    if(foundLetter === undefined && gameInfo.turn <= maxTurns) {
+        return 1;
+    }
+    else if(foundLetter !== undefined && gameInfo.turn >= maxTurns) {
+        return 2;
+    }
+    else {
+        return 3;
+    }
+}
+
+export function gameComplete(canvas, hasWon, secretWord, navLettersContainer) {
     const ctx = canvas.getContext("2d");
     ctx.globalAlpha = 0.7;
     ctx.fillStyle = "black";
@@ -129,7 +143,6 @@ export function gameComplete(canvas, hasWon, secretWord) {
     const heading = hasWon === true ? "Gratulerer, du vant!" : "GAME OVER";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-
     ctx.font = "600 40px Arial";
     ctx.fillText(heading, canvas.width / 2, 200);
     ctx.font = "400 25px Arial";
@@ -138,8 +151,10 @@ export function gameComplete(canvas, hasWon, secretWord) {
     ctx.cursor = "pointer";
     ctx.fillText(secretWord, canvas.width / 2, 320);
 
-
-    console.log(hasWon === true ? "Du vant" : "du tapte");
-
     startOverButton(canvas, {x: canvas.width / 2 - (150 / 2), y: canvas.height - 100, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
+
+    navLettersContainer.querySelectorAll("li").forEach(e => {
+        e.firstChild.disabled = true;
+    })
+
 }

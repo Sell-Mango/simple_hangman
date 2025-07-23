@@ -1,5 +1,5 @@
 import { splashScreen, startScreen, chooseDifficulty, setSecretWord, renderLetterButtons, createLetterObjects, startOverButton } from './setup.js';
-import { handleGameClick, drawRevealedLetters, redrawCanvas, gameComplete } from './logic.js';
+import { handleGameClick, drawRevealedLetters, redrawCanvas, gameComplete, checkGameStatus } from './logic.js';
 import { drawHangman } from './drawShapes.js';
 
 const maxTurns = 9;
@@ -48,7 +48,18 @@ function startGame() {
 
     // RENDER LETTER BUTTONS
     navLettersContainer.appendChild(renderLetterButtons(gameInfo.attempts));
-    startOverButton(canvas, {x: canvas.width - 180, y: canvas.height - 80, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
+    
+    const gameStatus = checkGameStatus(gameInfo, maxTurns);
+    switch(gameStatus) {
+        case 1:
+            gameComplete(canvas, true, gameInfo.secretWord, navLettersContainer);
+            break;
+        case 2:
+            gameComplete(canvas, false, gameInfo.secretWord, navLettersContainer);
+            break;
+        default:
+            startOverButton(canvas, {x: canvas.width - 180, y: canvas.height - 80, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
+    }   
 }
 
 window.onload = initGame;
@@ -69,16 +80,17 @@ navLettersContainer.addEventListener("click", (key) => {
         drawHangman(canvas, gameInfo.turn);
         drawRevealedLetters(canvas, gameInfo.letterObjects);
 
-        let foundLetter = gameInfo.letterObjects.find(e => e.revealed === false);
-
-        if(foundLetter === undefined && gameInfo.turn <= maxTurns) {
-            gameComplete(canvas, true, gameInfo.secretWord);
-        }
-        else if(foundLetter !== undefined && gameInfo.turn >= maxTurns) {
-            gameComplete(canvas, false, gameInfo.secretWord);
-        }
-        else {
-            startOverButton(canvas, {x: canvas.width - 180, y: canvas.height - 80, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
+        const gameStatus = checkGameStatus(gameInfo, maxTurns);
+        console.log(gameStatus)
+        switch(gameStatus) {
+            case 1:
+                gameComplete(canvas, true, gameInfo.secretWord, navLettersContainer);
+                break;
+            case 2:
+                gameComplete(canvas, false, gameInfo.secretWord, navLettersContainer);
+                break;
+            default:
+                startOverButton(canvas, {x: canvas.width - 180, y: canvas.height - 80, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
         }
     }
 });

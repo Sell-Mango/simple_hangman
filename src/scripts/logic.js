@@ -36,14 +36,45 @@ export function drawRevealedLetters(canvas, letters) {
         }
 
         // Adds a newline if word is colliding with edge of canvas
-        if (wordSize >= (canvas.width - canvas.width / 9)) {
+        /*if (wordSize >= (canvas.width - canvas.width / 9)) {
             positionX = initPosX;
             positionY += 50;
             wordSize = positionX;
-        }    
+        } */
 
         // Render word on canvas
         if(letters[i].letter === ' ' || i >= (letters.length -1)) {
+
+            // Check if a single word is stretching beyond the canvas boundary.
+            // Scale down fontsize and underline, then adjust the word size
+            // Continue until the word fits the canvas.
+            if(wordSize >= (canvas.width - canvas.width / 9)) {
+
+                if (wordSize - initPosX >= (canvas.width - initPosX - canvas.width / 9)) {
+                    while (wordSize - initPosX >= (canvas.width - initPosX - canvas.width / 9)) {
+                        // Scales down font size and path/line length
+                        const fontArgs = ctx.font.split(' ');
+                        const scaleFont = parseInt(fontArgs[1].slice(0, -2)) - 5;
+                        pathLength -= 5;
+                        ctx.font = `${fontArgs[0]} ${scaleFont}px ${fontArgs.slice(2).join(" ")}`;
+    
+                        // Measure and adjust the wordsize
+                        let newWordSize = 0;  
+                        tempWord.forEach(e => {
+                            newWordSize += spacing + (e.reavealed === true ? ctx.measureText(e.letter).width : pathLength);
+                        });
+        
+                        wordSize -= (wordSize - newWordSize);
+                        console.log(newWordSize)
+                        console.log(wordSize)
+                        console.log(canvas.width - initPosX - canvas.width / 9)
+                    }
+                } 
+                positionX = initPosX;
+                positionY += 50;
+                wordSize = positionX;
+            }
+
             for(let j = 0; j < tempWord.length; j++) {
                 let charLength = pathLength;
 
@@ -65,6 +96,7 @@ export function drawRevealedLetters(canvas, letters) {
             positionX += pathLength;
             // Clearing temporary word array
             tempWord = [];
+            ctx.font = "600 30px Arial";
         }
     }
 }

@@ -36,6 +36,7 @@ async function initGame() {
         gameInfo.secretWord = secretWord.word.slice(0, 1).toUpperCase() + secretWord.word.slice(1);
         gameInfo.letterObjects = createLetterObjects(gameInfo.secretWord);
         sessionStorage.setItem("gameInfo", JSON.stringify(gameInfo));
+        console.log(gameInfo.secretWord)
         startGame();
     }
 }
@@ -81,7 +82,6 @@ navLettersContainer.addEventListener("click", (key) => {
         drawRevealedLetters(canvas, gameInfo.letterObjects);
 
         const gameStatus = checkGameStatus(gameInfo, maxTurns);
-        console.log(gameStatus)
         switch(gameStatus) {
             case 1:
                 gameComplete(canvas, true, gameInfo.secretWord, navLettersContainer);

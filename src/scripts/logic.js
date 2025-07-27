@@ -26,55 +26,55 @@ export function drawRevealedLetters(canvas, letters) {
     let spacing = 8;
 
     let tempWord = [];
-    let wordSize = positionX;
-
+    let currentWL = 0;
+    let globalWL = 0;
     for (let i = 0; i < letters.length; i++) {
 
+        // Calculates length of each word, pushing letters in the current word to a temporary array before rendering out.
         if (letters[i].letter !== ' ' || i >= letters.length) {
-            wordSize += spacing + (letters[i].reavealed === true ? ctx.measureText(letters[i].letter).width : pathLength);
+            currentWL += spacing + (letters[i].reavealed === true ? ctx.measureText(letters[i].letter).width : pathLength);
             tempWord.push(letters[i]);
         }
 
-        // Adds a newline if word is colliding with edge of canvas
-        /*if (wordSize >= (canvas.width - canvas.width / 9)) {
-            positionX = initPosX;
-            positionY += 50;
-            wordSize = positionX;
-        } */
-
         // Render word on canvas
         if(letters[i].letter === ' ' || i >= (letters.length -1)) {
+            const currentWLCanvas = currentWL + initPosX;
+            const globalWLCanvas = globalWL + initPosX;
+            const wordBoundary = canvas.width - 50;
+            globalWL += currentWL;
 
             // Check if a single word is stretching beyond the canvas boundary.
             // Scale down fontsize and underline, then adjust the word size
             // Continue until the word fits the canvas.
-            if(wordSize >= (canvas.width - canvas.width / 9)) {
+            if(currentWLCanvas >= wordBoundary) {
+                while (currentWL + initPosX >= (canvas.width - 50)) {
+                    // Scales down font size and path/line length
+                    const fontArgs = ctx.font.split(' ');
+                    const scaleFont = parseInt(fontArgs[1].slice(0, -2)) - 2;
+                    ctx.font = `${fontArgs[0]} ${scaleFont}px ${fontArgs.slice(2).join(" ")}`;
+                    pathLength -= 2;
 
-                if (wordSize - initPosX >= (canvas.width - initPosX - canvas.width / 9)) {
-                    while (wordSize - initPosX >= (canvas.width - initPosX - canvas.width / 9)) {
-                        // Scales down font size and path/line length
-                        const fontArgs = ctx.font.split(' ');
-                        const scaleFont = parseInt(fontArgs[1].slice(0, -2)) - 5;
-                        pathLength -= 5;
-                        ctx.font = `${fontArgs[0]} ${scaleFont}px ${fontArgs.slice(2).join(" ")}`;
-    
-                        // Measure and adjust the wordsize
-                        let newWordSize = 0;  
-                        tempWord.forEach(e => {
-                            newWordSize += spacing + (e.reavealed === true ? ctx.measureText(e.letter).width : pathLength);
-                        });
-        
-                        wordSize -= (wordSize - newWordSize);
-                        console.log(newWordSize)
-                        console.log(wordSize)
-                        console.log(canvas.width - initPosX - canvas.width / 9)
-                    }
-                } 
-                positionX = initPosX;
-                positionY += 50;
-                wordSize = positionX;
+                    // Measure and adjust the currentWL
+                    let newcurrentWL = 0;
+                    tempWord.forEach(e => {
+                        newcurrentWL += spacing + (e.reavealed === true ? ctx.measureText(e.letter).width : pathLength);
+                        console.log("new size update", newcurrentWL, e.letter);
+                    });
+
+                    currentWL = newcurrentWL;
+                }
             }
 
+            // pushes a word to a new line if it hits the end of canvas, but not taking the whole space.
+            if(globalWLCanvas >= wordBoundary && currentWLCanvas < wordBoundary) {
+                console.log("global size", globalWL + initPosX);
+                positionX = initPosX;
+                globalWL = initPosX;
+                positionY += 50;
+                currentWL = 0;
+            }
+
+            // Render out each word in a sentence, leaving unrevealed letters as blank lines.
             for(let j = 0; j < tempWord.length; j++) {
                 let charLength = pathLength;
 
@@ -94,8 +94,9 @@ export function drawRevealedLetters(canvas, letters) {
             }
             // Adds a blank line after word is rendered
             positionX += pathLength;
-            // Clearing temporary word array
+            // Clearing temporary word array and adjust for the font size.
             tempWord = [];
+            currentWL = 0;
             ctx.font = "600 30px Arial";
         }
     }

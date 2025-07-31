@@ -108,6 +108,49 @@ export function setSecretWord(difficulty, words) {
     return wordList[genNum];  
 }
 
+export function createLetterPressed() {
+    let letters = [];
+    
+    for (let i = "a".charCodeAt(0); i <= "z".charCodeAt(0); i++) {
+        letters.push({letter: String.fromCharCode(i), isPressed: false });
+    }
+
+    letters.push({letter: 'æ', isPressed: false });
+    letters.push({letter: 'ø', isPressed: false });
+    letters.push({letter: 'å', isPressed: false });
+
+    return letters;
+}
+
+export function newRenderLetterButtons(lettersPressed, secretWord) {
+    const letters = secretWord.split('');
+    const lettersUl = document.createElement("ul");
+
+     for(let i = 0; i < lettersPressed.length; i++) {
+        const letterLi = document.createElement("li");
+        letterLi.setAttribute("class", "letterButton");
+
+        const letterButton = document.createElement("button");
+        letterButton.setAttribute("value", lettersPressed[i].letter);
+        
+        if(lettersPressed[i].isPressed) {
+            let letterMatch = letters.find(e => lettersPressed[i].letter === e);
+            if(letterMatch !== undefined) {
+                letterMatch = letterMatch.toLowerCase();
+            }
+            lettersPressed[i].letter.toLowerCase() === letterMatch ? letterButton.style.background = "green" : letterButton.style.background = "red";
+            letterButton.disabled = true;
+        }
+
+        const buttonContent = document.createTextNode(lettersPressed[i].letter.toUpperCase());
+        letterButton.appendChild(buttonContent);
+        letterLi.appendChild(letterButton);
+        lettersUl.appendChild(letterLi);
+    }
+
+    return lettersUl;
+}
+
 // Generate html for each letter button
 export function renderLetterButtons(attempts) {
 
@@ -169,7 +212,7 @@ export function startOverButton(canvas, button) {
 
     canvas.addEventListener("click", e => {
         if(isCanvasButtonClicked(canvas, button, e)) {
-            sessionStorage.removeItem("gameInfo");
+            sessionStorage.removeItem("hangSession");
             window.location.assign(window.location.href);
         }
     });

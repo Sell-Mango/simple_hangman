@@ -1,4 +1,4 @@
-import { splashScreen, startScreen, chooseDifficulty, setSecretWord, renderLetterButtons, createLetterObjects, startOverButton } from './setup.js';
+import { splashScreen, startScreen, chooseDifficulty, setSecretWord, renderLetterButtons, createLetterPressed, createLetterObjects, startOverButton, newRenderLetterButtons } from './setup.js';
 import { handleGameClick, drawRevealedLetters, redrawCanvas, gameComplete, checkGameStatus } from './logic.js';
 import { drawHangman } from './drawShapes.js';
 
@@ -9,6 +9,7 @@ let gameInfo = {
     secretWord: null,
     turn: null,
     letterObjects: null,
+    lettersPressed: [],
     attempts: []
 }
 
@@ -17,9 +18,9 @@ const navLettersContainer = document.querySelector("#letterContainer");
 const canvas = document.getElementById("hangmanGame");
 
 async function initGame() {
-    const gameTest = JSON.parse(sessionStorage.getItem("gameInfo"));
-    if(gameTest !== null) {
-        gameInfo = gameTest;
+    const getSession = JSON.parse(sessionStorage.getItem("hangSession"));
+    if(getSession !== null) {
+        continueGame(getSession);
         startGame();
     }
     else {
@@ -32,13 +33,28 @@ async function initGame() {
         else if(difficulty === 2) gameInfo.turn = 3;
         else gameInfo.turn === 1;
 
+        gameInfo.lettersPressed = createLetterPressed();
+
         gameInfo.difficulty = difficulty;
         gameInfo.secretWord = secretWord.word.slice(0, 1).toUpperCase() + secretWord.word.slice(1);
         gameInfo.letterObjects = createLetterObjects(gameInfo.secretWord);
-        sessionStorage.setItem("gameInfo", JSON.stringify(gameInfo));
-        console.log(gameInfo.secretWord)
+        sessionStorage.setItem("hangSession", JSON.stringify({lettersPressed: gameInfo.lettersPressed, secretWord: gameInfo.secretWord, difficulty: gameInfo.difficulty}));
         startGame();
     }
+}
+
+function continueGame(session) {
+    gameInfo.lettersPressed = session.lettersPressed;
+    gameInfo.difficulty = session.difficulty;
+    gameInfo.secretWord = session.secretWord;
+    gameInfo.letterObjects = createLetterObjects(session.secretWord);
+    const wordSplit = Array.from(session.secretWord);
+
+    session.lettersPressed.forEach((obj, index) => {
+       if(wordSplit.some(letter => obj.letter.toLowerCase() === letter.toLowerCase())) {
+        gameInfo.turn++;
+       }
+    });
 }
 
 // START GAME
@@ -48,7 +64,7 @@ function startGame() {
     drawHangman(canvas, gameInfo.turn);
 
     // RENDER LETTER BUTTONS
-    navLettersContainer.appendChild(renderLetterButtons(gameInfo.attempts));
+    navLettersContainer.appendChild(newRenderLetterButtons(gameInfo.lettersPressed, gameInfo.secretWord));
     
     const gameStatus = checkGameStatus(gameInfo, maxTurns);
     switch(gameStatus) {
@@ -71,13 +87,16 @@ navLettersContainer.addEventListener("click", (key) => {
         redrawCanvas(canvas);
         if(!handleGameClick(key, gameInfo.letterObjects)) {
             gameInfo.turn++;
-            gameInfo.attempts.push({letter: key.target.value.toLowerCase(), isCorrect: false});
-        }
-        else {
-            gameInfo.attempts.push({letter: key.target.value.toLowerCase(), isCorrect: true});
         }
 
-        sessionStorage.setItem("gameInfo", JSON.stringify(gameInfo)); 
+        gameInfo.lettersPressed.forEach(e => {
+            if(key.target.value === e.letter.toLowerCase()) {
+                e.isPressed = true;
+            }
+        });
+
+        sessionStorage.setItem("hangSession", JSON.stringify({lettersPressed: gameInfo.lettersPressed, secretWord: gameInfo.secretWord, difficulty: gameInfo.difficulty}));
+
         drawHangman(canvas, gameInfo.turn);
         drawRevealedLetters(canvas, gameInfo.letterObjects);
 

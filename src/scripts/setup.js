@@ -1,6 +1,30 @@
 import { redrawCanvas, delay, isCanvasButtonClicked } from './logic.js';
 import { drawOptionButton } from './drawShapes.js'
 
+export function fetchSession(session) {
+
+    const lettersPressed = session.lettersPressed;
+    const difficulty = session.difficulty;
+    const secretWord = session.secretWord;
+    const letterObjects = createLetterObjects(session.secretWord, session.lettersPressed);
+    let turn = 0;
+
+    if(difficulty === 3) turn = 3;
+    else if(difficulty === 2) turn = 3;
+    else turn === 1;
+
+    const wordSplit = Array.from(session.secretWord);
+    session.lettersPressed.forEach((obj) => {
+        if(obj.isPressed) {
+            if(!wordSplit.some(letter => obj.letter.toLowerCase() === letter.toLowerCase())) {
+                turn++;
+            }
+        }
+    });
+
+    return { difficulty: difficulty, secretWord: secretWord, turn: turn, letterObjects: letterObjects, lettersPressed: lettersPressed, maxTurns: 9 };
+}
+
 export async function splashScreen(canvas) {
     redrawCanvas(canvas);
     const ctx = canvas.getContext("2d");
@@ -151,56 +175,21 @@ export function newRenderLetterButtons(lettersPressed, secretWord) {
     return lettersUl;
 }
 
-// Generate html for each letter button
-export function renderLetterButtons(attempts) {
+// Generate array of letter objects to be rendered in canvae
+export function createLetterObjects(word, lettersPressed = null) {
+    const wordSplit = word.split("").map((e) => {
 
-    let letters = [];
-
-    for (let i = "a".charCodeAt(0); i <= "z".charCodeAt(0); i++) {
-        letters.push(String.fromCharCode(i));
-    }
-
-    letters.push('æ');
-    letters.push('ø');
-    letters.push('å');
-
-    const lettersUl = document.createElement("ul");
-    
-
-    for(let i = 0; i < letters.length; i++) {
-        const letterLi = document.createElement("li");
-        letterLi.setAttribute("class", "letterButton");
-
-        const letterButton = document.createElement("button");
-        letterButton.setAttribute("value", letters[i]);
-        
-        if(attempts.length > 0) {
-            let foundAttempt;
-            foundAttempt = attempts.find((e) => e.letter.toLowerCase() === letters[i].toLowerCase());
-
-            if(foundAttempt !== undefined) {
-                foundAttempt.isCorrect === true ? letterButton.style.background = "green" : letterButton.style.background = "red";
-                letterButton.disabled = true;
-            }
-            
+        let isCorrectWordPressed = false;
+        if (lettersPressed !== null && lettersPressed.some(l => l.isPressed && l.letter.toLowerCase() === e.toLowerCase())) {
+            isCorrectWordPressed = true;
         }
 
-        const buttonContent = document.createTextNode(letters[i].toUpperCase());
-        letterButton.appendChild(buttonContent);
-        letterLi.appendChild(letterButton);
-        lettersUl.appendChild(letterLi);
-    }
-    return lettersUl;
-}
-
-// Generate array of letter objects to be rendered in canvae
-export function createLetterObjects(word) {
-    const wordSplit = word.split("").map((e) => {
         return { 
             letter: e,
-            revealed: e === ' ' ? true : false
+            revealed: e === ' ' || isCorrectWordPressed ? true : false
         }
     });
+
     return wordSplit;
 }
 

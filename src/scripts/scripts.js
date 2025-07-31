@@ -1,8 +1,6 @@
-import { splashScreen, startScreen, chooseDifficulty, setSecretWord, renderLetterButtons, createLetterPressed, createLetterObjects, startOverButton, newRenderLetterButtons } from './setup.js';
+import { fetchSession, splashScreen, startScreen, chooseDifficulty, setSecretWord, createLetterPressed, createLetterObjects, startOverButton, newRenderLetterButtons } from './setup.js';
 import { handleGameClick, drawRevealedLetters, redrawCanvas, gameComplete, checkGameStatus } from './logic.js';
 import { drawHangman } from './drawShapes.js';
-
-const maxTurns = 9;
 
 let gameInfo = {
     difficulty: null,
@@ -10,7 +8,7 @@ let gameInfo = {
     turn: null,
     letterObjects: null,
     lettersPressed: [],
-    attempts: []
+    maxTurns: 9,
 }
 
 // GET HTML ELEMENTS
@@ -20,7 +18,7 @@ const canvas = document.getElementById("hangmanGame");
 async function initGame() {
     const getSession = JSON.parse(sessionStorage.getItem("hangSession"));
     if(getSession !== null) {
-        continueGame(getSession);
+        gameInfo = fetchSession(getSession);
         startGame();
     }
     else {
@@ -29,7 +27,7 @@ async function initGame() {
         let difficulty = await chooseDifficulty(canvas);
         let secretWord = await setSecretWord(difficulty, words);
 
-        if(difficulty === 3) gameInfo.turn = 5;
+        if(difficulty === 3) gameInfo.turn = 3;
         else if(difficulty === 2) gameInfo.turn = 3;
         else gameInfo.turn === 1;
 
@@ -43,20 +41,6 @@ async function initGame() {
     }
 }
 
-function continueGame(session) {
-    gameInfo.lettersPressed = session.lettersPressed;
-    gameInfo.difficulty = session.difficulty;
-    gameInfo.secretWord = session.secretWord;
-    gameInfo.letterObjects = createLetterObjects(session.secretWord);
-    const wordSplit = Array.from(session.secretWord);
-
-    session.lettersPressed.forEach((obj, index) => {
-       if(wordSplit.some(letter => obj.letter.toLowerCase() === letter.toLowerCase())) {
-        gameInfo.turn++;
-       }
-    });
-}
-
 // START GAME
 function startGame() {
     redrawCanvas(canvas);
@@ -65,18 +49,7 @@ function startGame() {
 
     // RENDER LETTER BUTTONS
     navLettersContainer.appendChild(newRenderLetterButtons(gameInfo.lettersPressed, gameInfo.secretWord));
-    
-    const gameStatus = checkGameStatus(gameInfo, maxTurns);
-    switch(gameStatus) {
-        case 1:
-            gameComplete(canvas, true, gameInfo.secretWord, navLettersContainer);
-            break;
-        case 2:
-            gameComplete(canvas, false, gameInfo.secretWord, navLettersContainer);
-            break;
-        default:
-            startOverButton(canvas, {x: canvas.width - 180, y: canvas.height - 80, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
-    }   
+    const gameStatus = checkGameStatus(gameInfo, canvas, navLettersContainer);
 }
 
 window.onload = initGame;
@@ -90,7 +63,7 @@ navLettersContainer.addEventListener("click", (key) => {
         }
 
         gameInfo.lettersPressed.forEach(e => {
-            if(key.target.value === e.letter.toLowerCase()) {
+            if(key.target.value.toLowerCase() === e.letter.toLowerCase()) {
                 e.isPressed = true;
             }
         });
@@ -100,16 +73,6 @@ navLettersContainer.addEventListener("click", (key) => {
         drawHangman(canvas, gameInfo.turn);
         drawRevealedLetters(canvas, gameInfo.letterObjects);
 
-        const gameStatus = checkGameStatus(gameInfo, maxTurns);
-        switch(gameStatus) {
-            case 1:
-                gameComplete(canvas, true, gameInfo.secretWord, navLettersContainer);
-                break;
-            case 2:
-                gameComplete(canvas, false, gameInfo.secretWord, navLettersContainer);
-                break;
-            default:
-                startOverButton(canvas, {x: canvas.width - 180, y: canvas.height - 80, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
-        }
+        const gameStatus = checkGameStatus(gameInfo, canvas, navLettersContainer);
     }
 });

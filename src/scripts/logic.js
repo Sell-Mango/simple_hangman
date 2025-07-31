@@ -40,7 +40,7 @@ export function drawRevealedLetters(canvas, letters) {
         if(letters[i].letter === ' ' || i >= (letters.length -1)) {
             const currentWLCanvas = currentWL + initPosX;
             const globalWLCanvas = globalWL + initPosX;
-            const wordBoundary = canvas.width - 50;
+            const wordBoundary = canvas.width - 100;
             globalWL += currentWL;
 
             // Check if a single word is stretching beyond the canvas boundary.
@@ -152,16 +152,19 @@ export function isCanvasButtonClicked(canvas, rectElement, event) {
         return (position.x > rectElement.x && position.x < rectElement.x + rectElement.width) && (position.y > rectElement.y && position.y < rectElement.y + rectElement.height);
 }
 
-export function checkGameStatus(gameInfo, maxTurns) {
+export function checkGameStatus(gameInfo, canvas, navLettersContainer) {
     let foundLetter = gameInfo.letterObjects.find(e => e.revealed === false);
 
-    if(foundLetter === undefined && gameInfo.turn <= maxTurns) {
+    if(foundLetter === undefined && gameInfo.turn <= gameInfo.maxTurns) {
+        gameComplete(canvas, true, gameInfo.secretWord, navLettersContainer);
         return 1;
     }
-    else if(foundLetter !== undefined && gameInfo.turn >= maxTurns) {
+    else if(foundLetter !== undefined && gameInfo.turn >= gameInfo.maxTurns) {
+        gameComplete(canvas, false, gameInfo.secretWord, navLettersContainer);
         return 2;
     }
     else {
+        startOverButton(canvas, {x: canvas.width - 180, y: canvas.height - 80, width: 150, height: 50, text: "Nytt spill", fillColor: "yellow"});
         return 3;
     }
 }

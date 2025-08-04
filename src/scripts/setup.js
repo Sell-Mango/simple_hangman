@@ -1,7 +1,7 @@
 import { redrawCanvas, delay, isCanvasButtonClicked } from './logic.js';
 import { drawOptionButton } from './drawShapes.js'
 
-export function fetchSession(session) {
+export async function fetchSession(session) {
 
     const lettersPressed = session.lettersPressed;
     const difficulty = session.difficulty;
@@ -13,16 +13,19 @@ export function fetchSession(session) {
     else if(difficulty === 2) turn = 3;
     else turn === 1;
 
-    const wordSplit = Array.from(session.secretWord);
-    session.lettersPressed.forEach((obj) => {
+    return new Promise((resolve, reject) => {
+        const wordSplit = Array.from(session.secretWord);
+        session.lettersPressed.forEach((obj) => {
         if(obj.isPressed) {
             if(!wordSplit.some(letter => obj.letter.toLowerCase() === letter.toLowerCase())) {
                 turn++;
             }
-        }
+        } 
     });
-
-    return { difficulty: difficulty, secretWord: secretWord, turn: turn, letterObjects: letterObjects, lettersPressed: lettersPressed, maxTurns: 9 };
+    
+    resolve({ difficulty: difficulty, secretWord: secretWord, turn: turn, letterObjects: letterObjects, lettersPressed: lettersPressed, maxTurns: 9 })
+    });
+    //return { difficulty: difficulty, secretWord: secretWord, turn: turn, letterObjects: letterObjects, lettersPressed: lettersPressed, maxTurns: 9 };
 }
 
 export async function splashScreen(canvas) {
@@ -78,15 +81,55 @@ export async function startScreen(canvas) {
     return new Promise((resolve, reject) => {
         canvas.addEventListener("click", (e) => {
             if(isCanvasButtonClicked(canvas, startButton, e)) {
-                resolve(fetch('../src/data/words.json')
-                    .then((response) => response.json())
-                );
+                resolve();
             }    
         });
     });
 }
 
 // SETUP CANVAS
+export async function setCategory(canvas) {
+    const ctx = canvas.getContext("2d");
+    redrawCanvas(canvas);
+
+    const catButtons = [
+        {
+            x: canvas.width / 2 - (150 / 2), y: 150, width: 150, height: 50, text: "Alle", fillColor: "green", category: "all"
+        },
+        {
+            x: canvas.width / 2 - (150 / 2), y: 230, width: 150, height: 50, text: "Videospill", fillColor: "blue", category: "games"
+        },
+        {
+            x: canvas.width / 2 - (150 / 2), y: 300, width: 150, height: 50, text: "Land og byer", fillColor: "orange", category: "locations"
+        },
+        {
+            x: canvas.width / 2 - (150 / 2), y: 370, width: 150, height: 50, text: "Film og TV", fillColor: "red", category: "filmTv"
+        }
+    ];
+
+    const heading = "Velg kategori";
+    ctx.font = "600 30px Arial";
+    const description = "Velg alle for et ord i hver kategori.";
+    const headingSize = ctx.measureText(heading).width;
+    ctx.fillText(heading, canvas.width / 2 - (headingSize / 2), 100);
+    
+    //drawOptionButton(canvas, catButtons[0], "20px Arial");
+    drawOptionButton(canvas, catButtons[1], "20px Arial");
+    drawOptionButton(canvas, catButtons[2], "20px Arial");
+    drawOptionButton(canvas, catButtons[3], "20px Arial");
+    
+    return new Promise((resolve, reject) => {
+        canvas.addEventListener("click", (event) => {
+        catButtons.forEach(button => {
+            if(isCanvasButtonClicked(canvas, button, event)) {
+                resolve(button.category);
+            }
+            });
+        });
+    });
+}
+
+
 export async function chooseDifficulty(canvas) {
     const ctx = canvas.getContext("2d");
     redrawCanvas(canvas);
@@ -96,10 +139,10 @@ export async function chooseDifficulty(canvas) {
             x: canvas.width / 2 - (150 / 2), y: 150, width: 150, height: 50, text: "Lett", fillColor: "green", diffLevel: 1
         },
         {
-            x: canvas.width / 2 - (150 / 2), y: 230, width: 150, height: 50, text: "Vanlig", fillColor: "orange", diffLevel: 2
+            x: canvas.width / 2 - (150 / 2), y: 220, width: 150, height: 50, text: "Vanlig", fillColor: "orange", diffLevel: 2
         },
         {
-            x: canvas.width / 2 - (150 / 2), y: 300, width: 150, height: 50, text: "vanskelig", fillColor: "red", diffLevel: 3
+            x: canvas.width / 2 - (150 / 2), y: 290, width: 150, height: 50, text: "vanskelig", fillColor: "red", diffLevel: 3
         }
     ];
 
@@ -123,17 +166,28 @@ export async function chooseDifficulty(canvas) {
     });
 }
 
-export function setSecretWord(difficulty, words) {
-    let wordList = words.filter((e) => {
-        return e.difficulty <= difficulty;
-    });
-    const genNum = Math.floor(Math.random() * wordList.length -1);
-    if(genNum < 0) genNum = 0;
-    return wordList[genNum];  
+export async function setSecretWord(category) {
+
+    const wordList = await fetch(`../src/data/${category}.txt`)
+    .then(response => {
+        if(!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(data => data.split('\r\n'));
+
+
+    const genNum = Math.floor(Math.random() * wordList.length);
+
+    const secretWord = genNum < 0 ? wordList[0] : wordList[genNum];
+    return secretWord;
 }
 
-export function createLetterPressed() {
+export function createLetterPressed(difficulty, secretWord) {
     let letters = [];
+    const wordArr = Array.from(secretWord.replaceAll(" ", ""));
+    const wordLength = wordArr.length;
     
     for (let i = "a".charCodeAt(0); i <= "z".charCodeAt(0); i++) {
         letters.push({letter: String.fromCharCode(i), isPressed: false });
@@ -142,6 +196,25 @@ export function createLetterPressed() {
     letters.push({letter: 'æ', isPressed: false });
     letters.push({letter: 'ø', isPressed: false });
     letters.push({letter: 'å', isPressed: false });
+
+    let hints = 1;
+    if (wordLength >= 12) hints = 3;
+    else if (wordLength >= 6) hints = 2;
+
+    for (let i = 0; i < hints; i++) {
+        let randNum = Math.floor(Math.random() * wordLength);
+        if (randNum < 0) randNum = 1;
+
+        if(difficulty < 3) {
+            letters.find(l => l.letter === wordArr[randNum].toLowerCase()).isPressed = true;
+        }
+        else {
+            const wrongLetters = letters.filter(e => !wordArr.includes(e.letter.toLowerCase()));
+            let randWrongLetters = Math.floor(Math.random() * wrongLetters.length);
+            letters.find(l => l.letter === wrongLetters[randWrongLetters].letter.toLowerCase()).isPressed = true;
+        }
+        
+    }
 
     return letters;
 }

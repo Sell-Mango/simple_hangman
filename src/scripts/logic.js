@@ -38,11 +38,11 @@ export function drawRevealedLetters(canvas, letters) {
 
         // Render word on canvas
         if(letters[i].letter === ' ' || i >= (letters.length -1)) {
+            globalWL += currentWL;
             const currentWLCanvas = currentWL + initPosX;
             const globalWLCanvas = globalWL + initPosX;
-            const wordBoundary = canvas.width - 100;
-            globalWL += currentWL;
-
+            const wordBoundary = canvas.width - 50;
+            
             // Check if a single word is stretching beyond the canvas boundary.
             // Scale down fontsize and underline, then adjust the word size
             // Continue until the word fits the canvas.
@@ -58,7 +58,6 @@ export function drawRevealedLetters(canvas, letters) {
                     let newcurrentWL = 0;
                     tempWord.forEach(e => {
                         newcurrentWL += spacing + (e.reavealed === true ? ctx.measureText(e.letter).width : pathLength);
-                        console.log("new size update", newcurrentWL, e.letter);
                     });
 
                     currentWL = newcurrentWL;
@@ -67,7 +66,6 @@ export function drawRevealedLetters(canvas, letters) {
 
             // pushes a word to a new line if it hits the end of canvas, but not taking the whole space.
             if(globalWLCanvas >= wordBoundary && currentWLCanvas < wordBoundary) {
-                console.log("global size", globalWL + initPosX);
                 positionX = initPosX;
                 globalWL = initPosX;
                 positionY += 50;

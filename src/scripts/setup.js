@@ -32,7 +32,7 @@ export async function splashScreen(canvas) {
     redrawCanvas(canvas);
     const ctx = canvas.getContext("2d");
     const img = new Image();
-    img.src = "../logo.png";
+    img.src = "logo.png";
 
     let splashScreenScale = 1;
 
@@ -168,7 +168,7 @@ export async function chooseDifficulty(canvas) {
 
 export async function setSecretWord(category) {
 
-    const wordList = await fetch(`../src/data/${category}.txt`)
+    const wordList = await fetch(`/hangman/src/data/${category}.txt`)
     .then(response => {
         if(!response.ok) {
             throw new Error(`Response status: ${response.status}`);

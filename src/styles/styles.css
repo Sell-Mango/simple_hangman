@@ -2,7 +2,9 @@
 
 body {
     background-color: rgb(234, 234, 234);
-}
+    background-image: url(../gfx/wallpaper.jpg);
+    background-repeat: repeat;
+    background-size: 40%;
 
 main {
     margin: auto;
@@ -12,6 +14,20 @@ main {
 
 #hangmanGame {
     background-color: rgb(255, 255, 255);
+}
+
+#header {
+    padding: 0.5rem 1rem;
+}
+
+.logo {
+    display: inline-block;
+    width: 150px;
+    img {
+        width: 100%;
+        height: 100%;
+        transform: rotate(5deg);
+    }
 }
 
 h1 {
@@ -34,8 +50,13 @@ h1 {
     list-style-type: none;
     
     button {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
         cursor: pointer;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: rgba(255, 255, 255, 0);
+        border: none;
     }
+}
 }

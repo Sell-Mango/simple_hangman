@@ -122,10 +122,10 @@ function updateClickedButton(button, isCorrect) {
     currentButton.disabled = true;
 
     if(isCorrect) {
-        currentButton.style.backgroundColor = "green";
+        currentButton.style.backgroundImage = "url('../src/gfx/green_sticky.png')";
     }
     else {
-        currentButton.style.backgroundColor = "red";
+        currentButton.style.backgroundImage = "url('../src/gfx/pink_sticky.png')";
     }
 }
 

@@ -32,7 +32,7 @@ export async function splashScreen(canvas) {
     redrawCanvas(canvas);
     const ctx = canvas.getContext("2d");
     const img = new Image();
-    img.src = "../logo.png";
+    img.src = "./src/gfx/logo.png";
 
     let splashScreenScale = 1;
 
@@ -228,19 +228,23 @@ export function newRenderLetterButtons(lettersPressed, secretWord) {
         letterLi.setAttribute("class", "letterButton");
 
         const letterButton = document.createElement("button");
+        const buttonContent = document.createTextNode(lettersPressed[i].letter.toUpperCase());
+        letterButton.appendChild(buttonContent);
         letterButton.setAttribute("value", lettersPressed[i].letter);
+        letterButton.style.backgroundImage = "url('../src/gfx/yellow_sticky.png')";
+        let randDegree = Math.floor(Math.random() * (15 - (-15) + 1)) + (-15)
+        console.log(randDegree)
+        letterButton.style.transform = `rotate(${randDegree}deg)`;
         
         if(lettersPressed[i].isPressed) {
             let letterMatch = letters.find(e => lettersPressed[i].letter === e);
             if(letterMatch !== undefined) {
                 letterMatch = letterMatch.toLowerCase();
             }
-            lettersPressed[i].letter.toLowerCase() === letterMatch ? letterButton.style.background = "green" : letterButton.style.background = "red";
+            lettersPressed[i].letter.toLowerCase() === letterMatch ? letterButton.style.backgroundImage = "url('../src/gfx/green_sticky.png')" : letterButton.style.backgroundImage = "url('../src/gfx/pink_sticky.png')";
             letterButton.disabled = true;
         }
 
-        const buttonContent = document.createTextNode(lettersPressed[i].letter.toUpperCase());
-        letterButton.appendChild(buttonContent);
         letterLi.appendChild(letterButton);
         lettersUl.appendChild(letterLi);
     }

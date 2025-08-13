@@ -13,7 +13,10 @@ main {
 }
 
 #hangmanGame {
-    background-color: rgb(255, 255, 255);
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+
 }
 
 #header {

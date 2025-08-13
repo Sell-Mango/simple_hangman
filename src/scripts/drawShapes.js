@@ -1,67 +1,69 @@
 export function drawHangman(canvas, turn = 1) {
 
     function startDraw() {
-        ctx.moveTo(50, 350);
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+        ctx.moveTo(80, 350);
         ctx.lineTo(200, 350);
-        ctx.moveTo(125, 350);
-        ctx.lineTo(125, 100);
+        ctx.moveTo(140, 350);
+        ctx.lineTo(140, 100);
         ctx.stroke();
     }
 
     // EASY DIFFICULTY
     function turnOne() {
-        ctx.moveTo(125, 100);
-        ctx.lineTo(270, 100);
+        ctx.moveTo(140, 100);
+        ctx.lineTo(290, 100);
         ctx.stroke();
     }
 
     function turnTwo() {
-        ctx.moveTo(180, 100);
-        ctx.lineTo(125, 150);
+        ctx.moveTo(200, 100);
+        ctx.lineTo(140, 150);
         ctx.stroke();
     }
 
     // MEDIUM DIFFICULTY
     function turnThree() {
-        ctx.moveTo(270, 100);
-        ctx.lineTo(270, 130);
+        ctx.moveTo(290, 100);
+        ctx.lineTo(290, 130);
         ctx.stroke();
     }
 
     function drawHead() {
-        ctx.moveTo(270, 140);
-        ctx.arc(270, 140, 20, 0, 2 * Math.PI);
+        ctx.moveTo(290, 140);
+        ctx.arc(290, 140, 20, 0, 2 * Math.PI);
         ctx.fill();
     }
 
     // HARD DIFFICULTY
     function drawBody() {
-        ctx.moveTo(270, 150);
-        ctx.lineTo(270, 230);
+        ctx.moveTo(290, 150);
+        ctx.lineTo(290, 230);
         ctx.stroke();
     }
 
     function drawLeftLeg() {
-        ctx.moveTo(270, 230);
-        ctx.lineTo(240, 280);
+        ctx.moveTo(290, 230);
+        ctx.lineTo(250, 280);
         ctx.stroke();
     }
 
     function drawRightLeg() {
-        ctx.moveTo(270, 230);
-        ctx.lineTo(300, 280);
+        ctx.moveTo(290, 230);
+        ctx.lineTo(320, 280);
         ctx.stroke();
     }
 
     function drawLeftArm() {
-        ctx.moveTo(270, 180);
-        ctx.lineTo(240, 210);
+        ctx.moveTo(290, 180);
+        ctx.lineTo(260, 210);
         ctx.stroke();
     }
 
     function drawRightArm() {
-        ctx.moveTo(270, 180);
-        ctx.lineTo(300, 210);
+        ctx.moveTo(290, 180);
+        ctx.lineTo(320, 210);
         ctx.stroke();
     }
     
@@ -70,6 +72,7 @@ export function drawHangman(canvas, turn = 1) {
 
     for (let i = 0; i <= turn; i++) {
         ctx.beginPath();
+        ctx.fillStyle = "#ffffff";
         drawings[i]();
     }
 }

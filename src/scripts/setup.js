@@ -25,7 +25,6 @@ export async function fetchSession(session) {
     
     resolve({ difficulty: difficulty, secretWord: secretWord, turn: turn, letterObjects: letterObjects, lettersPressed: lettersPressed, maxTurns: 9 })
     });
-    //return { difficulty: difficulty, secretWord: secretWord, turn: turn, letterObjects: letterObjects, lettersPressed: lettersPressed, maxTurns: 9 };
 }
 
 export async function splashScreen(canvas) {
@@ -61,6 +60,10 @@ export async function splashScreen(canvas) {
             resolve();
         }
     });
+}
+
+export function setCanvasStyle(canvas) {
+    canvas.style.backgroundImage = "url('../src/gfx/chalkboard.png')";
 }
 
 export async function startScreen(canvas) {
@@ -233,7 +236,6 @@ export function newRenderLetterButtons(lettersPressed, secretWord) {
         letterButton.setAttribute("value", lettersPressed[i].letter);
         letterButton.style.backgroundImage = "url('../src/gfx/yellow_sticky.png')";
         let randDegree = Math.floor(Math.random() * (15 - (-15) + 1)) + (-15)
-        console.log(randDegree)
         letterButton.style.transform = `rotate(${randDegree}deg)`;
         
         if(lettersPressed[i].isPressed) {

@@ -1,4 +1,4 @@
-import { fetchSession, splashScreen, startScreen, setCategory, chooseDifficulty, setSecretWord, createLetterPressed, createLetterObjects, newRenderLetterButtons } from './setup.js';
+import { fetchSession, splashScreen, setCanvasStyle, startScreen, setCategory, chooseDifficulty, setSecretWord, createLetterPressed, createLetterObjects, newRenderLetterButtons } from './setup.js';
 import { handleGameClick, drawRevealedLetters, redrawCanvas, checkGameStatus, delay } from './logic.js';
 import { drawHangman } from './drawShapes.js';
 
@@ -19,10 +19,12 @@ async function initGame() {
     const getSession = JSON.parse(sessionStorage.getItem("hangSession"));
     if(getSession !== null) {
         gameInfo = await fetchSession(getSession);
+        setCanvasStyle(canvas);
         await startGame();
     }
     else {
         await splashScreen(canvas);
+        setCanvasStyle(canvas);
         await startScreen(canvas);
         let category = await setCategory(canvas);
         let difficulty = await chooseDifficulty(canvas);
